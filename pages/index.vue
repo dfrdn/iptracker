@@ -90,7 +90,7 @@
               <div class="md:w-5/6">
                 <client-only>
                   <v-date-picker
-                    v-model="status.date"
+                    v-model="status.doneOn"
                     :input-props="{
                       class: 'textinput',
                       placeholder: 'Date',
@@ -102,7 +102,7 @@
               <button
                 v-if="index > 0"
                 class="delete-btn w-1/2"
-                @click="deleteStatus(status)"
+                @click="deleteStatus(index)"
               >
                 Delete Status
               </button>
@@ -117,18 +117,9 @@
       <vuetable
         ref="vuetable"
         :api-mode="false"
-        :fields="[
-          'client',
-          'subjectMatter',
-          'applicationNo',
-          'registrationNo',
-          'filingDate',
-          'registrationDate',
-          'timeline',
-          'deadlines',
-          'team',
-        ]"
+        :fields="fields"
         :data="$store.getters['GET_MATTERS']"
+        :css="tablecss"
       />
     </client-only>
   </div>
@@ -193,6 +184,53 @@ export default Vue.extend({
       },
       // eslint-disable-next-line dot-notation
       lawyers: this.$store.getters['GET_LAWYERS'],
+      tablecss: {
+        tableWrapper: 'shadow w-full divide-y divide-gray-200 overflow-x-auto',
+        tableBodyClass: 'bg-white',
+      },
+      fields: [
+        {
+          name: 'client',
+          title: 'Client',
+        },
+        {
+          name: 'subjectMatter',
+          title: 'Subject Matter',
+        },
+        {
+          name: 'applicationNo',
+          title: 'Application No.',
+        },
+        {
+          name: 'registrationNo',
+          title: 'Registration No.',
+        },
+        {
+          name: 'filingDate',
+          title: 'Filing Date',
+          formatter: this.dateFormat,
+        },
+        {
+          name: 'registrationDate',
+          title: 'Registration Date',
+          formatter: this.dateFormat,
+        },
+        {
+          name: 'timeline',
+          title: 'Timeline',
+          formatter: this.timelineFormat,
+        },
+        {
+          name: 'deadlines',
+          title: 'Deadlines',
+          // formatter: this.timelineFormat,
+        },
+        {
+          name: 'team',
+          title: 'Team',
+          formatter: this.teamFormat,
+        },
+      ],
     }
   },
   async mounted() {
@@ -212,8 +250,8 @@ export default Vue.extend({
     addStatus() {
       this.newMatter.timeline.push({ action: '' })
     },
-    deleteStatus(status: Status) {
-      this.newMatter.timeline.splice(this.newMatter.timeline.indexOf(status), 1)
+    deleteStatus(index: number) {
+      this.newMatter.timeline.splice(index, 1)
     },
     addLawyer(newLawyer: string) {
       this.newMatter.team.push(newLawyer.toUpperCase())
@@ -227,6 +265,25 @@ export default Vue.extend({
         team,
         timeline,
       }
+    },
+    dateFormat(date: string) {
+      const options = { year: 'numeric', month: 'long', day: 'numeric' }
+      return date ? new Date(date).toLocaleDateString('en-GB', options) : '-'
+    },
+    timelineFormat(timeline: Status[]) {
+      return timeline
+        .map(
+          (status) =>
+            `${
+              status.doneOn || status.dueDate
+                ? this.dateFormat(status.doneOn ?? status.dueDate)
+                : ''
+            }: ${status.action}`
+        )
+        .join('\n-\n')
+    },
+    teamFormat(team: string[]) {
+      return team.join(', ')
     },
   },
 })
@@ -281,6 +338,22 @@ export default Vue.extend({
   }
   &:active {
     @apply bg-red-900 shadow;
+  }
+}
+
+table {
+  tbody {
+    & > * + * {
+      @apply border-t border-gray-200;
+    }
+    td {
+      @apply px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-700;
+    }
+  }
+  thead {
+    th {
+      @apply px-6 py-3 border-b border-gray-200 bg-gray-100 text-left text-xs leading-4 font-medium text-gray-700 uppercase tracking-wider;
+    }
   }
 }
 </style>

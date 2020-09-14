@@ -7,9 +7,7 @@ export const getters = {
     return state.matters
   },
   GET_LAWYERS(state) {
-    console.log(state.matters.map((m) => m.team))
     const lawyers = [...new Set(state.matters.map((m) => m.team).flat())]
-    console.log(lawyers.flat())
     return lawyers.flat()
   },
 }
