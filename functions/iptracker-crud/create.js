@@ -16,8 +16,8 @@ exports.handler = async (event, context) => {
   }
   /* construct the fauna query */
   return client
-    .query(q.Create(q.Ref('classes/items'), item))
-    .then(response => {
+    .query(q.Create(q.Ref('classes/matters'), item))
+    .then((response) => {
       console.log('success', response)
       /* Success! return the response with statusCode 200 */
       return {
@@ -25,7 +25,7 @@ exports.handler = async (event, context) => {
         body: JSON.stringify(response),
       }
     })
-    .catch(error => {
+    .catch((error) => {
       console.log('error', error)
       /* Error! return the error with statusCode 400 */
       return {

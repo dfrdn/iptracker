@@ -11,15 +11,15 @@ exports.handler = async (event, context) => {
   const id = event.id
   console.log(`Function 'update' invoked. update id: ${id}`)
   return client
-    .query(q.Update(q.Ref(`classes/items/${id}`), { data }))
-    .then(response => {
+    .query(q.Update(q.Ref(`classes/matters/${id}`), { data }))
+    .then((response) => {
       console.log('success', response)
       return {
         statusCode: 200,
         body: JSON.stringify(response),
       }
     })
-    .catch(error => {
+    .catch((error) => {
       console.log('error', error)
       return {
         statusCode: 400,

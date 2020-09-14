@@ -10,15 +10,15 @@ exports.handler = async (event, context) => {
   const id = event.id
   console.log(`Function 'delete' invoked. delete id: ${id}`)
   return client
-    .query(q.Delete(q.Ref(`classes/items/${id}`)))
-    .then(response => {
+    .query(q.Delete(q.Ref(`classes/matters/${id}`)))
+    .then((response) => {
       console.log('success', response)
       return {
         statusCode: 200,
         body: JSON.stringify(response),
       }
     })
-    .catch(error => {
+    .catch((error) => {
       console.log('error', error)
       return {
         statusCode: 400,

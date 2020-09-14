@@ -16,19 +16,20 @@ function createFaunaDB() {
 
   /* Based on your requirements, change the schema here */
   return client
-    .query(q.Create(q.Ref('classes'), { name: 'items' }))
+    .query(q.Create(q.Ref('classes'), { name: 'matters' }))
     .then(() => {
-      console.log('Created items class')
+      console.log('Created matters class')
       return client.query(
         q.Create(q.Ref('indexes'), {
-          name: 'all_items',
-          source: q.Ref('classes/items'),
+          name: 'all_matters',
+          source: q.Ref('classes/matters'),
           active: true,
         })
       )
     })
 
     .catch((e) => {
+      console.log(e)
       if (
         e.requestResult.statusCode === 400 &&
         e.message === 'instance not unique'
