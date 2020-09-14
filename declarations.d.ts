@@ -4,3 +4,4 @@ declare module '*.vue' {
 }
 
 declare module 'v-calendar'
+declare module 'vuetable-2'

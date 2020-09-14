@@ -56,13 +56,16 @@
             :options="$store.getters['GET_LAWYERS']"
             placeholder="Team"
             :multiple="true"
+            :taggable="true"
+            tag-placeholder="Press enter to add lawyer"
+            @tag="addLawyer"
           />
         </div>
         <div>
           <label for="timeline" class="inputlabel">Timeline</label>
           <div
-            v-for="status in newMatter.timeline"
-            :key="status"
+            v-for="(status, index) in newMatter.timeline"
+            :key="index"
             class="flex flex-col space-y-4 mb-4"
           >
             <div class="md:flex items-center">
@@ -95,20 +98,43 @@
                 /></client-only>
               </div>
             </div>
-            <button class="btn" @click="addStatus">New Status</button>
+            <div class="flex justify-end">
+              <button
+                v-if="index > 0"
+                class="delete-btn w-1/2"
+                @click="deleteStatus(status)"
+              >
+                Delete Status
+              </button>
+              <button class="btn w-1/2" @click="addStatus">New Status</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    {{ $store.getters['GET_MATTERS'] }}
-    {{ $store.getters['GET_LAWYERS'] }}
-    {{ newMatter }}
     <button class="btn" @click="createMatter">Add Matter</button>
+    <vuetable
+      ref="vuetable"
+      :api-mode="false"
+      :fields="[
+        'client',
+        'subjectMatter',
+        'applicationNo',
+        'registrationNo',
+        'filingDate',
+        'registrationDate',
+        'timeline',
+        'deadlines',
+        'team',
+      ]"
+      :data="$store.getters['GET_MATTERS']"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import Vuetable from 'vuetable-2'
 
 interface Status {
   action: string
@@ -151,16 +177,20 @@ const matters: IPMatter[] = []
 matters.push(testMatter)
 
 export default Vue.extend({
+  components: { Vuetable },
   data() {
     const timeline: Status[] = [{ action: '' }]
+    const team: string[] = []
     return {
       matters,
       newMatter: {
         client: '',
         subjectMatter: '',
-        team: [],
+        team,
         timeline,
       },
+      // eslint-disable-next-line dot-notation
+      lawyers: this.$store.getters['GET_LAWYERS'],
     }
   },
   async mounted() {
@@ -169,6 +199,7 @@ export default Vue.extend({
   methods: {
     async createMatter() {
       await this.$store.dispatch('ADD_MATTER', this.newMatter)
+      this.resetNewMatter()
       await this.$store.dispatch('LOAD_MATTERS')
     },
     async getAllMatters() {
@@ -178,6 +209,22 @@ export default Vue.extend({
     async deleteMatter() {},
     addStatus() {
       this.newMatter.timeline.push({ action: '' })
+    },
+    deleteStatus(status: Status) {
+      this.newMatter.timeline.splice(this.newMatter.timeline.indexOf(status), 1)
+    },
+    addLawyer(newLawyer: string) {
+      this.newMatter.team.push(newLawyer.toUpperCase())
+    },
+    resetNewMatter() {
+      const timeline: Status[] = [{ action: '' }]
+      const team: string[] = []
+      this.newMatter = {
+        client: '',
+        subjectMatter: '',
+        team,
+        timeline,
+      }
     },
   },
 })
@@ -219,6 +266,19 @@ export default Vue.extend({
   }
   &:active {
     @apply bg-blue-900 shadow;
+  }
+}
+
+.delete-btn {
+  @apply rounded-full bg-red-600 text-red-100 px-4 py-2 shadow transition-shadow duration-300 ease-in-out;
+  &:hover {
+    @apply shadow-lg;
+  }
+  &:focus {
+    @apply shadow-outline outline-none;
+  }
+  &:active {
+    @apply bg-red-900 shadow;
   }
 }
 </style>

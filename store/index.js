@@ -1,6 +1,5 @@
 export const state = () => ({
   matters: [],
-  lawyers: [],
 })
 
 export const getters = {
@@ -8,7 +7,9 @@ export const getters = {
     return state.matters
   },
   GET_LAWYERS(state) {
-    const lawyers = [...new Set([...state.matters.map((m) => m.team)])]
+    console.log(state.matters.map((m) => m.team))
+    const lawyers = [...new Set(state.matters.map((m) => m.team).flat())]
+    console.log(lawyers.flat())
     return lawyers.flat()
   },
 }
