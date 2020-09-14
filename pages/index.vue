@@ -113,22 +113,24 @@
       </div>
     </div>
     <button class="btn" @click="createMatter">Add Matter</button>
-    <vuetable
-      ref="vuetable"
-      :api-mode="false"
-      :fields="[
-        'client',
-        'subjectMatter',
-        'applicationNo',
-        'registrationNo',
-        'filingDate',
-        'registrationDate',
-        'timeline',
-        'deadlines',
-        'team',
-      ]"
-      :data="$store.getters['GET_MATTERS']"
-    />
+    <client-only>
+      <vuetable
+        ref="vuetable"
+        :api-mode="false"
+        :fields="[
+          'client',
+          'subjectMatter',
+          'applicationNo',
+          'registrationNo',
+          'filingDate',
+          'registrationDate',
+          'timeline',
+          'deadlines',
+          'team',
+        ]"
+        :data="$store.getters['GET_MATTERS']"
+      />
+    </client-only>
   </div>
 </template>
 
