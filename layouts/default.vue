@@ -1,9 +1,11 @@
 <template>
   <div class="flex flex-col min-h-screen bg-gray-100">
+    <div data-netlify-identity-button>Login with Netlify Identity</div>
+
     <Nuxt class="flex-grow" />
     <footer class="bg-gray-800">
       <div class="container text-gray-100">
-        <h2 class="py-8">&copy; 2020 by Daniel Fordan.</h2>
+        <h2 class="py-8 px-4">&copy; 2020 by Daniel Fordan.</h2>
       </div>
     </footer>
   </div>
