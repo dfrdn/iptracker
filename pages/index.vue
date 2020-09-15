@@ -1,10 +1,12 @@
 <template>
-  <div class="container">
-    <h1 class="text-center text-2xl m-4">IP Tracker</h1>
-    <div class="flex space-x-4">
-      <div class="space-y-4 text-gray-800 w-1/3">
+  <div class="container space-y-8 p-4">
+    <h1 class="text-center text-4xl">IP Tracker</h1>
+    <div class="flex flex-col md:flex-row space-y-4 md:space-x-4 md:space-y-0">
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-800 w-full md:w-1/2"
+      >
         <div>
-          <label for="client" class="inputlabel">Client</label>
+          <label for="client" class="inputlabel">Client*</label>
           <input
             id="client"
             v-model="newMatter.client"
@@ -15,7 +17,7 @@
           />
         </div>
         <div>
-          <label for="subject-matter" class="inputlabel">Subject Matter</label>
+          <label for="subject-matter" class="inputlabel">Subject Matter*</label>
           <input
             id="subject-matter"
             v-model="newMatter.subjectMatter"
@@ -25,8 +27,19 @@
             class="textinput"
           />
         </div>
+        <div>
+          <label class="inputlabel">Application No.</label>
+          <input
+            id="application-number"
+            v-model="newMatter.applicationNo"
+            type="text"
+            name="application-number"
+            placeholder="Application Number"
+            class="textinput"
+          />
+        </div>
         <client-only>
-          <div class="my-4">
+          <div>
             <label class="inputlabel">Filing Date</label>
             <v-date-picker
               v-model="newMatter.filingDate"
@@ -36,7 +49,18 @@
               }"
             />
           </div>
-          <div class="my-4">
+          <div class="">
+            <label class="inputlabel">Registration No.</label>
+            <input
+              id="registration-number"
+              v-model="newMatter.registrationNo"
+              type="text"
+              name="registration-number"
+              placeholder="Registration Number"
+              class="textinput"
+            />
+          </div>
+          <div class="">
             <label class="inputlabel">Registration Date</label>
             <v-date-picker
               v-model="newMatter.registrationDate"
@@ -47,10 +71,8 @@
             />
           </div>
         </client-only>
-      </div>
-      <div class="w-1/3 space-y-4">
         <div>
-          <label for="team" class="inputlabel">Team</label>
+          <label for="team" class="inputlabel">Team*</label>
           <multiselect
             v-model="newMatter.team"
             :options="$store.getters['GET_LAWYERS']"
@@ -61,6 +83,8 @@
             @tag="addLawyer"
           />
         </div>
+      </div>
+      <div class="w-full md:w-1/4 space-y-4">
         <div>
           <label for="timeline" class="inputlabel">Timeline</label>
           <div
@@ -69,12 +93,12 @@
             class="flex flex-col space-y-4 mb-4"
           >
             <div class="md:flex items-center">
-              <div class="md:w-1/6">
-                <label for="action" class="sidelabel md:text-right"
+              <div class="w-full md:w-1/4">
+                <label for="action" class="sidelabel text-right mb-2"
                   >Action</label
                 >
               </div>
-              <div class="md:w-5/6">
+              <div class="w-full md:w-3/4">
                 <input
                   v-model="status.action"
                   type="text"
@@ -84,10 +108,10 @@
               </div>
             </div>
             <div class="md:flex items-center">
-              <div class="md:w-1/6">
-                <label for="date" class="sidelabel md:text-right">Date</label>
+              <div class="md:w-1/4">
+                <label for="date" class="sidelabel text-right mb-2">Date</label>
               </div>
-              <div class="md:w-5/6">
+              <div class="md:w-3/4">
                 <client-only>
                   <v-date-picker
                     v-model="status.doneOn"
@@ -95,10 +119,11 @@
                       class: 'textinput',
                       placeholder: 'Date',
                     }"
-                /></client-only>
+                  />
+                </client-only>
               </div>
             </div>
-            <div class="flex justify-end">
+            <div class="flex justify-end space-x-2">
               <button
                 v-if="index > 0"
                 class="delete-btn w-1/2"
@@ -111,8 +136,66 @@
           </div>
         </div>
       </div>
+      <div class="md:w-1/4 space-y-4">
+        <div>
+          <label for="deadlines" class="inputlabel">Deadlines</label>
+          <div
+            v-for="(deadline, index) in newMatter.deadlines"
+            :key="index"
+            class="flex flex-col space-y-4 mb-4"
+          >
+            <div class="md:flex items-center">
+              <div class="w-full md:w-1/4">
+                <label for="action" class="sidelabel text-right mb-2"
+                  >Action</label
+                >
+              </div>
+              <div class="md:w-3/4">
+                <input
+                  v-model="deadline.action"
+                  type="text"
+                  placeholder="Action"
+                  class="textinput w-full"
+                />
+              </div>
+            </div>
+            <div class="md:flex items-center">
+              <div class="md:w-1/4">
+                <label for="date" class="sidelabel text-right mb-2"
+                  >Due Date</label
+                >
+              </div>
+              <div class="md:w-3/4">
+                <client-only>
+                  <v-date-picker
+                    v-model="deadline.dueDate"
+                    :input-props="{
+                      class: 'textinput',
+                      placeholder: 'Due Date',
+                    }"
+                  />
+                </client-only>
+              </div>
+            </div>
+            <div class="flex justify-end space-x-2">
+              <button
+                v-if="index > 0"
+                class="delete-btn w-1/2"
+                @click="deleteDeadline(index)"
+              >
+                Delete Deadline
+              </button>
+              <button class="btn w-1/2" @click="addDeadline">
+                New Deadline
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <button class="btn" @click="createMatter">Add Matter</button>
+    <button class="btn block mx-auto w-1/2" @click="createMatter">
+      Add Matter
+    </button>
     <client-only>
       <vuetable
         ref="vuetable"
@@ -120,67 +203,50 @@
         :fields="fields"
         :data="$store.getters['GET_MATTERS']"
         :css="tablecss"
-      />
+      >
+        <template slot="timeline-slot" slot-scope="props">
+          <div class="divide-y">
+            <div
+              v-for="(status, index) in props.rowData.timeline"
+              :key="index"
+              class="py-2"
+            >
+              <h3 class="font-semibold">{{ dateFormat(status.doneOn) }}</h3>
+              <p>{{ status.action }}</p>
+            </div>
+          </div>
+        </template>
+        <template slot="deadlines-slot" slot-scope="props">
+          <div class="divide-y">
+            <div
+              v-for="(deadline, index) in props.rowData.deadlines"
+              :key="index"
+              class="py-2"
+            >
+              <h3 class="font-semibold">{{ dateFormat(deadline.dueDate) }}</h3>
+              <p>{{ deadline.action }}</p>
+            </div>
+          </div>
+        </template>
+      </vuetable>
     </client-only>
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'vue'
 import Vuetable from 'vuetable-2'
-
-interface Status {
-  action: string
-  doneOn?: Date
-}
-
-interface Deadline {
-  action: string
-  dueDate?: Date
-}
-
-interface IPMatter {
-  id: string
-  client: string
-  subjectMatter: string
-  applicationNo?: string
-  registrationNo?: string
-  filingDate?: Date
-  registrationDate?: Date
-  timeline: Status[]
-  deadlines: Deadline[]
-  team: string[]
-}
-
-const testMatter = {
-  id: '123',
-  client: 'test',
-  subjectMatter: 'test',
-  timeline: [{ action: 'testAction', doneOn: new Date(Date.now()) }],
-  deadlines: [
-    {
-      action: 'test action',
-      dueDate: new Date(Date.now()),
-    },
-  ],
-  team: ['DAF', 'DKCM'],
-}
-
-const matters: IPMatter[] = []
-matters.push(testMatter)
 
 export default Vue.extend({
   components: { Vuetable },
   data() {
-    const timeline: Status[] = [{ action: '' }]
-    const team: string[] = []
     return {
-      matters,
       newMatter: {
         client: '',
         subjectMatter: '',
-        team,
-        timeline,
+        team: [],
+        timeline: [{ action: '' }],
+        deadlines: [{ action: '' }],
       },
       // eslint-disable-next-line dot-notation
       lawyers: this.$store.getters['GET_LAWYERS'],
@@ -216,14 +282,12 @@ export default Vue.extend({
           formatter: this.dateFormat,
         },
         {
-          name: 'timeline',
+          name: 'timeline-slot',
           title: 'Timeline',
-          formatter: this.timelineFormat,
         },
         {
-          name: 'deadlines',
+          name: 'deadlines-slot',
           title: 'Deadlines',
-          // formatter: this.timelineFormat,
         },
         {
           name: 'team',
@@ -238,8 +302,8 @@ export default Vue.extend({
   },
   methods: {
     async createMatter() {
-      await this.$store.dispatch('ADD_MATTER', this.newMatter)
-      this.resetNewMatter()
+      const newMatter = this.resetNewMatter()
+      await this.$store.dispatch('ADD_MATTER', newMatter)
       await this.$store.dispatch('LOAD_MATTERS')
     },
     async getAllMatters() {
@@ -250,39 +314,34 @@ export default Vue.extend({
     addStatus() {
       this.newMatter.timeline.push({ action: '' })
     },
-    deleteStatus(index: number) {
+    deleteStatus(index) {
       this.newMatter.timeline.splice(index, 1)
     },
-    addLawyer(newLawyer: string) {
+    addDeadline() {
+      this.newMatter.deadlines.push({ action: '' })
+    },
+    deleteDeadline(index) {
+      this.newMatter.deadlines.splice(index, 1)
+    },
+    addLawyer(newLawyer) {
       this.newMatter.team.push(newLawyer.toUpperCase())
     },
     resetNewMatter() {
-      const timeline: Status[] = [{ action: '' }]
-      const team: string[] = []
+      const newMatter = { ...this.newMatter }
       this.newMatter = {
         client: '',
         subjectMatter: '',
-        team,
-        timeline,
+        team: [],
+        timeline: [{ action: '' }],
+        deadlines: [{ action: '' }],
       }
+      return newMatter
     },
-    dateFormat(date: string) {
+    dateFormat(date) {
       const options = { year: 'numeric', month: 'long', day: 'numeric' }
       return date ? new Date(date).toLocaleDateString('en-GB', options) : '-'
     },
-    timelineFormat(timeline: Status[]) {
-      return timeline
-        .map(
-          (status) =>
-            `${
-              status.doneOn || status.dueDate
-                ? this.dateFormat(status.doneOn ?? status.dueDate)
-                : ''
-            }: ${status.action}`
-        )
-        .join('\n-\n')
-    },
-    teamFormat(team: string[]) {
+    teamFormat(team) {
       return team.join(', ')
     },
   },
