@@ -1,7 +1,5 @@
 <template>
   <div class="flex flex-col min-h-screen bg-gray-100">
-    <div data-netlify-identity-button>Login with Netlify Identity</div>
-
     <Nuxt class="flex-grow" />
     <footer class="bg-gray-800">
       <div class="container text-gray-100">
