@@ -1,3 +1,5 @@
+import Vuelidate from 'vuelidate'
+
 export default {
   /*
    ** Nuxt rendering mode
@@ -34,7 +36,11 @@ export default {
    ** Plugins to load before mounting the App
    ** https://nuxtjs.org/guide/plugins
    */
-  plugins: ['~plugins/v-calendar.client.ts'],
+  plugins: [
+    '~plugins/v-calendar.client.ts',
+    '~plugins/vuelidate.ts',
+    '~plugins/vuetable.client.ts',
+  ],
   /*
    ** Auto import components
    ** See https://nuxtjs.org/api/configuration-components
